@@ -1,0 +1,16 @@
+﻿{
+  "assembly": [
+    "RetreiveFieldFormHTTPHead.dll"
+  ],
+  "javascript": [
+
+  ],
+  "css": [],
+  "image": "Resources/PluginLogo.png",
+  "description": "从HTTP请求HEAD中读取特定的Field，如Authorization、From等",
+  "name": "读取HTTP请求HEAD",
+  "pluginType": "command",
+  "guid": "10C1FEC2-80A3-4ED0-83C9-FCD7103A92E6",
+  "version": "1.0.0.0",
+  "dependenceVersion": "7.0.100.0"
+}
