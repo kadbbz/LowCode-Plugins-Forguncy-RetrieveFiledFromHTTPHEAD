@@ -7,10 +7,10 @@
   ],
   "css": [],
   "image": "Resources/PluginLogo.png",
-  "description": "从HTTP请求HEAD中读取特定的Field，如Authorization、From等",
-  "name": "读取HTTP请求HEAD",
+  "description": "通过HTTP请求读取服务端信息和特定的表头，如Authorization、From等",
+  "name": "读取HTTP请求信息",
   "pluginType": "command",
   "guid": "10C1FEC2-80A3-4ED0-83C9-FCD7103A92E6",
-  "version": "1.0.0.0",
-  "dependenceVersion": "7.0.100.0"
+  "version": "1.1.0.0",
+  "dependenceVersion": "8.0.103.0"
 }

@@ -6,12 +6,12 @@ using Forguncy;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("活字格插件：读取HTTP请求HEAD")]
-[assembly: AssemblyDescription("从HTTP请求HEAD中读取特定的Field，如Authorization、From等")]
+[assembly: AssemblyTitle("读取HTTP请求信息")]
+[assembly: AssemblyDescription("通过HTTP请求读取服务端信息和特定的表头，如Authorization、From等")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("55093136@qq.com")]
-[assembly: AssemblyProduct("活字格插件")]
-[assembly: AssemblyCopyright(ForguncyVersionPlugin.AssemblyCopyright)]
+[assembly: AssemblyCompany("GrapeCity inc.")]
+[assembly: AssemblyProduct("活字格低代码开发平台")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

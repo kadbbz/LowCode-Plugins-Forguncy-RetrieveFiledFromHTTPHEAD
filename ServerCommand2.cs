@@ -17,7 +17,7 @@ namespace RetreiveFieldFormHTTPHead
     /// Icon：设置在设计器中使用的图标，需要将其打包到Resources
     /// </summary>
     [Icon("pack://application:,,,/RetreiveFieldFormHTTPHead;component/Resources/Icon.png")]
-    public class ServerCommand : Command, ICommandExecutableInServerSide, IServerCommandParamGenerator
+    public class ServerCommand2 : Command, ICommandExecutableInServerSide, IServerCommandParamGenerator
     {
         /// <summary>
         /// 插件类型：设置为服务端命令插件
@@ -34,24 +34,29 @@ namespace RetreiveFieldFormHTTPHead
         /// <returns>易读的字符串</returns>
         public override string ToString()
         {
-            return "读取HTTP请求HEAD";
+            return "读取服务器信息";
         }
-
-        /// <summary>
-        /// 参数：设置了DisplayName的属性，都会被视作参数。默认情况下，参数会被视作传入型参数，如需将通过参数将处理结果返回，需要配合IServerCommandParamGenerator的GetGenerateParams方法，将该参数登记为传出参数
-        /// 如果希望为这个参数支持公式编辑能力，进行一些预处理的话，需要将FormulaProperty设置为True；设置后，在使用读取该属性的值时，需要配套使用DataContext（ICommandExecutableInServerSide）中的EvaluateFormula方法
-        /// </summary>
-        [DisplayName("要读取的字段名")]
-        [FormulaProperty(true)]
-        public object FieldName { get; set; }
-
 
         /// <summary>
         /// 需要传出的参数，在设计器中填写的是参数的名称
         /// 建议通过DisplayName明确告知开发者
         /// </summary>
-        [DisplayName("将字段值保存为参数：")]
-        public string ParamaterName4FieldValue { get; set; }
+        [DisplayName("将服务器的机器名保存为参数：")]
+        public string ParamaterName4HostName { get; set; }
+
+        /// <summary>
+        /// 需要传出的参数，在设计器中填写的是参数的名称
+        /// 建议通过DisplayName明确告知开发者
+        /// </summary>
+        [DisplayName("将服务器的IPv4地址保存为参数：")]
+        public string ParamaterName4Ip { get; set; }
+
+        /// <summary>
+        /// 需要传出的参数，在设计器中填写的是参数的名称
+        /// 建议通过DisplayName明确告知开发者
+        /// </summary>
+        [DisplayName("将服务器的端口保存为参数：")]
+        public string ParamaterName4Port { get; set; }
 
         /// <summary>
         /// 命令执行逻辑
@@ -62,28 +67,14 @@ namespace RetreiveFieldFormHTTPHead
         {
             try
             {
-                // 对于设置了FormulaProperty的参数，在使用前需要通过这个方法，执行公式计算，得出实际的值。            
-                var key = dataContext.EvaluateFormula(this.FieldName).ToString();
-                var value = string.Empty;
+               
+                dataContext.Parameters[ParamaterName4HostName] = Environment.MachineName;
+                var remoteIp = dataContext.Context.Connection.LocalIpAddress;
+                var remotePort = dataContext.Context.Connection.LocalPort;
 
-                // dataContext基于HTTP请求的上下文，Context属性的类型为Microsoft.AspNetCore.Http.HttpContext
-                // 使用时，需要通过NuGet下载Microsoft.AspNetCore.Http.Abstractions组件
-                if (dataContext.Context.Request.Headers.ContainsKey(key))
-                {
-                    // 获取HTTP HEAD的字段               
-                    value = dataContext.Context.Request.Headers[key].ToString();
-                }
+                dataContext.Parameters[ParamaterName4Ip] = (null != remoteIp)? remoteIp.MapToIPv4().ToString():"N/A";
+                dataContext.Parameters[ParamaterName4Port] = remotePort;
 
-                // 将结果写入dataContext的变量列表，即可实现数据的返回
-                // 为了避免出错，建议先检查当前服务端命令的参数列表中是否有同名参数，如果没有需要创建，否则更新这个参数的值即可
-                if (dataContext.Parameters.ContainsKey(ParamaterName4FieldValue))
-                {
-                    dataContext.Parameters[ParamaterName4FieldValue] = value;
-                }
-                else
-                {
-                    dataContext.Parameters.Add(ParamaterName4FieldValue, value);
-                }
 
                 // 大多数服务端命令插件不会内置Return行为，该命令执行过后，服务端命令还需要继续执行。
                 // 否则可以通过设置返回对象的errCode、Message，然后设置AllowWriteResultToResponse为True，终止这个服务端命令并返回。
@@ -92,7 +83,7 @@ namespace RetreiveFieldFormHTTPHead
             catch (Exception ex)
             {
                 // 对于敏感度较低的功能插件来说，通常会将异常记录到日志，然后正常返回
-                dataContext.Log.AppendLine("【从HTTP请求HEAD中读取Field】插件的Execute方法发生异常：\r\n" + ex.ToString());
+                dataContext.Log.AppendLine("【读取服务器信息】插件的Execute方法发生异常：\r\n" + ex.ToString());
 
                 // 对于高度敏感的插件，记录日志后，依然需要将异常向上抛出
                 //return new ExecuteResult()
@@ -113,10 +104,25 @@ namespace RetreiveFieldFormHTTPHead
         /// <returns></returns>
         public IEnumerable<GenerateParam> GetGenerateParams()
         {
-            yield return new GenerateNormalParam()
+            List<GenerateParam> result = new List<GenerateParam>
             {
-                ParamName = ParamaterName4FieldValue,
+                new GenerateNormalParam()
+                {
+                    ParamName = ParamaterName4HostName,
+                },
+
+                new GenerateNormalParam()
+                {
+                    ParamName = ParamaterName4Ip,
+                },
+
+                new GenerateNormalParam()
+                {
+                    ParamName = ParamaterName4Port,
+                }
             };
+
+            return result;
         }
     }
 }
