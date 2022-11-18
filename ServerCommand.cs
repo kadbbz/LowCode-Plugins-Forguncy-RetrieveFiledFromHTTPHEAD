@@ -34,14 +34,21 @@ namespace RetreiveFieldFormHTTPHead
         /// <returns>易读的字符串</returns>
         public override string ToString()
         {
-            return "读取HTTP请求HEAD";
+            if (null == FieldName)
+            {
+                return "读取HTTP请求标头";
+            }
+            else
+            {
+                return "读取HTTP请求标头：" + FieldName.ToString();
+            }
         }
 
         /// <summary>
         /// 参数：设置了DisplayName的属性，都会被视作参数。默认情况下，参数会被视作传入型参数，如需将通过参数将处理结果返回，需要配合IServerCommandParamGenerator的GetGenerateParams方法，将该参数登记为传出参数
         /// 如果希望为这个参数支持公式编辑能力，进行一些预处理的话，需要将FormulaProperty设置为True；设置后，在使用读取该属性的值时，需要配套使用DataContext（ICommandExecutableInServerSide）中的EvaluateFormula方法
         /// </summary>
-        [DisplayName("要读取的字段名")]
+        [DisplayName("要读取的标头：")]
         public string FieldName { get; set; }
 
 
@@ -49,7 +56,7 @@ namespace RetreiveFieldFormHTTPHead
         /// 需要传出的参数，在设计器中填写的是参数的名称
         /// 建议通过DisplayName明确告知开发者
         /// </summary>
-        [DisplayName("将字段值保存为参数：")]
+        [DisplayName("将值保存为参数：")]
         public string ParamaterName4FieldValue { get; set; }
 
         /// <summary>
@@ -61,14 +68,15 @@ namespace RetreiveFieldFormHTTPHead
         {
             try
             {
+                string key = dataContext.EvaluateFormulaAsync(this.FieldName).Result.ToString();
                 var value = string.Empty;
 
                 // dataContext基于HTTP请求的上下文，Context属性的类型为Microsoft.AspNetCore.Http.HttpContext
                 // 使用时，需要通过NuGet下载Microsoft.AspNetCore.Http.Abstractions组件
-                if (dataContext.Context.Request.Headers.ContainsKey(this.FieldName))
+                if (dataContext.Context.Request.Headers.ContainsKey(key))
                 {
                     // 获取HTTP HEAD的字段               
-                    value = dataContext.Context.Request.Headers[this.FieldName].ToString();
+                    value = dataContext.Context.Request.Headers[key].ToString();
                 }
 
                 // 将结果写入dataContext的变量列表，即可实现数据的返回
@@ -89,7 +97,7 @@ namespace RetreiveFieldFormHTTPHead
             catch (Exception ex)
             {
                 // 对于敏感度较低的功能插件来说，通常会将异常记录到日志，然后正常返回
-                dataContext.Log.AppendLine("【从HTTP请求HEAD中读取Field】插件的Execute方法发生异常：\r\n" + ex.ToString());
+                dataContext.Log.AppendLine("【读取HTTP请求标头】插件的Execute方法发生异常：\r\n" + ex.ToString());
 
                 // 对于高度敏感的插件，记录日志后，依然需要将异常向上抛出
                 //return new ExecuteResult()

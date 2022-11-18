@@ -34,29 +34,23 @@ namespace RetreiveFieldFormHTTPHead
         /// <returns>易读的字符串</returns>
         public override string ToString()
         {
-            return "读取服务器信息";
+            return "获取处理本请求的服务器名";
         }
 
         /// <summary>
         /// 需要传出的参数，在设计器中填写的是参数的名称
         /// 建议通过DisplayName明确告知开发者
         /// </summary>
-        [DisplayName("将服务器的机器名保存为参数：")]
+        [DisplayName("将机器名保存为参数：")]
         public string ParamaterName4HostName { get; set; }
 
         /// <summary>
         /// 需要传出的参数，在设计器中填写的是参数的名称
         /// 建议通过DisplayName明确告知开发者
         /// </summary>
-        [DisplayName("将服务器的IPv4地址保存为参数：")]
+        [DisplayName("将IPv4地址保存为参数：")]
         public string ParamaterName4Ip { get; set; }
 
-        /// <summary>
-        /// 需要传出的参数，在设计器中填写的是参数的名称
-        /// 建议通过DisplayName明确告知开发者
-        /// </summary>
-        [DisplayName("将服务器的端口保存为参数：")]
-        public string ParamaterName4Port { get; set; }
 
         /// <summary>
         /// 命令执行逻辑
@@ -67,14 +61,11 @@ namespace RetreiveFieldFormHTTPHead
         {
             try
             {
-               
                 dataContext.Parameters[ParamaterName4HostName] = Environment.MachineName;
                 var remoteIp = dataContext.Context.Connection.LocalIpAddress;
                 var remotePort = dataContext.Context.Connection.LocalPort;
 
                 dataContext.Parameters[ParamaterName4Ip] = (null != remoteIp)? remoteIp.MapToIPv4().ToString():"N/A";
-                dataContext.Parameters[ParamaterName4Port] = remotePort;
-
 
                 // 大多数服务端命令插件不会内置Return行为，该命令执行过后，服务端命令还需要继续执行。
                 // 否则可以通过设置返回对象的errCode、Message，然后设置AllowWriteResultToResponse为True，终止这个服务端命令并返回。
@@ -114,11 +105,6 @@ namespace RetreiveFieldFormHTTPHead
                 new GenerateNormalParam()
                 {
                     ParamName = ParamaterName4Ip,
-                },
-
-                new GenerateNormalParam()
-                {
-                    ParamName = ParamaterName4Port,
                 }
             };
 
