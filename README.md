@@ -1,3 +1,6 @@
+# 项目迁移至Gitee
+https://gitee.com/low-code-dev-lab/lowcode-plugins-forguncy-retrieve-filed-from-http-head
+
 # 活字格低代码开发平台插件：读取HTTP请求HEAD
 ## 功能简介
 本插件提供了读取HTTP请求HEAD中特定字段的能力，通常用于系统集成场景。当第三方系统以HTTP请求的形式调用使用活字格开发的服务端命令时，开发者可以通过该插件将HTTP请求HEAD中的特定字段，如Authorization、From等，读取到变量；后面再根据该变量的值执行权限验证等后续工作。
